@@ -6,6 +6,6 @@ This is Zhe Fan's ECE650 Project Repository.
 
 1. [Malloc Library](#my-first-title)
 2. [My second title](#my-second-title)
-## My first title
+## Malloc Library
 Some text.
 ## My second title
