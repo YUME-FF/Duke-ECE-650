@@ -9,7 +9,9 @@ struct chunk_meta {
 };
 typedef struct chunk_meta chunk;
 
-void * request_space(size_t size);
+void * allocate_space(size_t size);
+void add_chunk(chunk * ptr);
+void remove_chunk(chunk * ptr);
 
 //First Fit malloc/free
 void * ff_malloc(size_t size);
