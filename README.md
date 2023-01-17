@@ -18,9 +18,9 @@ The free() function takes an address (that was returned by a previous malloc ope
 
 The task is to implement 2 versions of malloc and free, each based on a different strategy for
 determining the memory region to allocate. The two strategies are:
-1. First Fit: Examine the free space tracker (e.g. free list), and allocate an address from
+1. **First Fit**: Examine the free space tracker (e.g. free list), and allocate an address from
 the first free region with enough space to fit the requested allocation size.
-2. Best Fit: Examine all of the free space information, and allocate an address from the
+2. **Best Fit***: Examine all of the free space information, and allocate an address from the
 free region which has the smallest number of bytes greater than or equal to the
 requested allocation size.
 
