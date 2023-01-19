@@ -74,4 +74,5 @@ chunk * split_chunk(size_t size, chunk * chk){
   splitChunk->free = 1;
   splitChunk->next = NULL;
   splitChunk->prev = NULL;
+  return splitChunk;
 }
