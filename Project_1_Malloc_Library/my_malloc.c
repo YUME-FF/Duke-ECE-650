@@ -60,3 +60,18 @@ void add_chunk(chunk * ptr){
   }
 }
 }
+
+/*
+Function: split the chunk.
+One of First fit's short is it may make a small size to
+be set in a big chunk, thus when the remain chunk is large
+enough, the chunk should be splitted.
+*/
+chunk * split_chunk(size_t size, chunk * chk){
+  chunk * splitChunk;
+  splitChunk = chk + META_SIZE + size;
+  splitChunk->size = chk->size - size - META_SIZE;
+  splitChunk->free = 1;
+  splitChunk->next = NULL;
+  splitChunk->prev = NULL;
+}
