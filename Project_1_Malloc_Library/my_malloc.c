@@ -110,13 +110,11 @@ void * ff_malloc(size_t size) {
         if (ptr->size >= size + META_SIZE) {
           chunk * split = split_chunk(size, ptr);
           remove_chunk(ptr);
-          extend_chunk(split);
+          extend_chunk(split);//after remove, split the chunk
           ptr->size = size;
-          //free_size -= (size + sizeof(Metadata));
         }
         else {
-          remove_chunk(ptr);
-          //free_size -= (p->size + sizeof(Metadata));
+          remove_chunk(ptr); // not enough, directly remove chunk
         }
         ptr->free = 0;
         ptr->next = NULL;
@@ -133,21 +131,16 @@ void ff_free(void * ptr) {
   chunk * pointer;
   pointer = (chunk *)((char *)ptr - META_SIZE);
   pointer->free = 1;
-  //free_size += p->size + sizeof(Metadata);
   extend_chunk(pointer);
 
   if ((pointer->next != NULL) &&
       ((char *)pointer + pointer->size + META_SIZE == (char *)pointer->next)) {
     pointer->size += META_SIZE + pointer->next->size;
     remove_chunk(pointer->next);
-    //pointer->next->next = NULL;
-    //pointer->next->prev = NULL;
   }
   if ((pointer->prev != NULL) &&
       ((char *)pointer->prev + pointer->prev->size + META_SIZE == (char *)pointer)) {
     pointer->prev->size += META_SIZE + pointer->size;
     remove_chunk(pointer);
-    //pointer->next = NULL;
-    //pointer->prev = NULL;
   }
 }
