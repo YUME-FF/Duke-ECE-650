@@ -65,6 +65,24 @@ void extend_chunk(chunk * ptr) {
 Function: remove targeted chunk
 */
 void remove_chunk(chunk * ptr) {
+  if (free_region_before == ptr) {
+    if (free_region == ptr){
+        free_region = NULL;
+        free_region_before = NULL;
+     }
+    else{
+      free_region_before = ptr->prev;
+      free_region_before->next = NULL;
+    }
+  }
+  else if (free_region == ptr){
+    free_region = ptr->next;
+    free_region->prev = NULL;
+  }
+  else{
+    ptr->prev->next = ptr->next;
+    ptr->next->prev = ptr->prev;
+  }
 }
 
 /*
@@ -88,6 +106,24 @@ void * ff_malloc(size_t size) {
   if (free_region != NULL) {
     chunk * ptr = free_region;
     while (ptr != NULL) {
+      if(ptr->size >= size){ //Start first fit
+        if(ptr->size >= size + META_SIZE){
+          chunk * split = split_chunk(size, ptr);
+          remove(ptr);
+          extend_chunk(split);
+          ptr->size = size;
+          //free_size -= (size + sizeof(Metadata));
+        }
+        else {
+          remove_chunk(ptr);
+          //free_size -= (p->size + sizeof(Metadata));
+        }
+        ptr->free = 0;
+        ptr->next = NULL;
+        ptr->prev = NULL;
+        return (char *)ptr + META_SIZE;
+        }
+      }
       ptr = ptr->next;
     }
   }
