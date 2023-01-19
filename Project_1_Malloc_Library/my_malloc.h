@@ -6,7 +6,7 @@ struct chunk_meta {
   size_t size;               //the size of this chunk
   int free;                  //it is free or not
   struct chunk_meta * next;  //double linkedlist to next chunk
-  struct chunk_meta * next;  //double linkedlist to previous chunk
+  struct chunk_meta * prev;  //double linkedlist to previous chunk
 };
 typedef struct chunk_meta chunk;
 
