@@ -5,7 +5,7 @@
 chunk * first = NULL;
 chunk * free_region = NULL;
 chunk * free_region_before = NULL;
-size_t _size = 0;
+size_t __SIZE__ = 0;
 
 
 
@@ -16,7 +16,7 @@ and add new block to the end of the struct chunk.
 */
 void * allocate_space(size_t size){
   chunk * new_block = sbrk(size + META_SIZE);
-  _size += size + META_SIZE; // record the size of data
+  __SIZE__ += size + META_SIZE; // record the size of data
   if (first == NULL) {
     first = new_block;
   }
