@@ -28,10 +28,9 @@ void * allocate_space(size_t size){
 }
 
 /*
-When find ptr not at free_region, 
-then move ptr to it.
+Function: extend free memory region in chunk
 */
-void add_chunk(chunk * ptr){
+void extend_chunk(chunk * ptr){
   if (free_region == NULL)|| (ptr < free_region)) {
     ptr->prev = NULL;
     ptr->next = free_region;
@@ -44,14 +43,18 @@ void add_chunk(chunk * ptr){
     free_region = ptr;
   }
   else {
-    Metadata * curr = free_region;
+    chunk * curr = free_region;
+    //find until ptr < curr->next
     while ((curr->next != NULL) && (ptr > curr->next)) {
       curr = curr->next;
     }
+    
+    //curr -> ptr -> curr->next
     ptr->prev = curr;
     ptr->next = curr->next;
     curr->next = ptr;
-    if (ptr->next != NULL) {
+
+    if (ptr->next != NULL) {//ptr is the last 
       ptr->next->prev = ptr;
     }
     else {
@@ -59,6 +62,11 @@ void add_chunk(chunk * ptr){
     }
   }
 }
+
+/*
+Function: remove targeted chunk
+*/
+void remove_chunk(chunk * ptr){
 }
 
 /*
@@ -75,4 +83,38 @@ chunk * split_chunk(size_t size, chunk * chk){
   splitChunk->next = NULL;
   splitChunk->prev = NULL;
   return splitChunk;
+}
+
+//First Fit malloc/free
+void * ff_malloc(size_t size){
+  if (free_region != NULL) {
+    chunk * ptr = free_region;
+    while (ptr != NULL) {
+      ptr = ptr->next;
+    }
+  }
+  return allocate_block(size);
+}
+
+void ff_free(void * ptr){
+  chunk * pointer;
+  pointer = (chunk *)((char *)ptr - META_SIZE);
+  pointer->free = 1;
+  //free_size += p->size + sizeof(Metadata);
+  extend_block(pointer);
+
+  if ((pointer->next != NULL) && ((char *)pointer + pointer->size + META_SIZE == (char *)pointer->next)) {
+    pointer->size += META_SIZE + pointer->next->size;
+    //remove_block(p->next);
+    pointer->next->next = NULL;
+    pointer->next->prev = NULL;
+  }
+  if ((pointer->prev != NULL) &&
+      ((char *)pointer->prev + pointer->prev->size + META_SIZE == (char *)pointer)) {
+    pointer->prev->size += META_SIZE + pointer->size;
+    //remove_block(p);
+    pointer->next = NULL;
+    pointer->prev = NULL;
+  }
+}
 }
