@@ -28,7 +28,8 @@ void * allocate_space(size_t size){
 }
 
 /*
-
+When find ptr not at free_region, 
+then move ptr to it.
 */
 void add_chunk(chunk * ptr){
   if (free_region == NULL)|| (ptr < free_region)) {
