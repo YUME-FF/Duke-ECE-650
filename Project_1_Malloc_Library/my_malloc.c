@@ -93,7 +93,7 @@ enough, the chunk should be splitted.
 */
 chunk * split_chunk(size_t size, chunk * chk) {
   chunk * splitChunk;
-  splitChunk = chk + META_SIZE + size;
+  splitChunk = (chunk *)((char *)chk + META_SIZE + size);
   splitChunk->size = chk->size - size - META_SIZE;
   splitChunk->free = 1;
   splitChunk->next = NULL;
@@ -108,15 +108,7 @@ void * ff_malloc(size_t size) {
     while (ptr != NULL) {
       if (ptr->size >= size) {  //Start first fit
         if (ptr->size >= size + META_SIZE) {
-          //chunk * split = split_chunk(size, ptr);
-
-          chunk * split;
-          split = (chunk *)((char *)ptr + META_SIZE + size);
-          split->size = ptr->size - size - META_SIZE;
-          split->free = 1;
-          split->next = NULL;
-          split->prev = NULL;
-
+          chunk * split = split_chunk(size, ptr);
           remove_chunk(ptr);
           extend_chunk(split);
           ptr->size = size;
