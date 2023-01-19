@@ -20,5 +20,6 @@ void * allocate_space(size_t size){
   new_block->size = size;
   new_block->free = 0;
   new_block->next = NULL;
+  new_block->prev = NULL;
   return (char *)new_block + META_SIZE;
 }
