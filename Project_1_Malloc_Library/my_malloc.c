@@ -46,7 +46,7 @@ void add_chunk(chunk * ptr){
   else {
     Metadata * curr = free_region;
     while ((curr->next != NULL) && (ptr > curr->next)) {
-      curr = curr->next;  //curr< ptr< curr->next, keep going
+      curr = curr->next;
     }
     ptr->prev = curr;
     ptr->next = curr->next;
