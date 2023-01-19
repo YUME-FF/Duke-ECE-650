@@ -108,10 +108,18 @@ void * ff_malloc(size_t size) {
     while (ptr != NULL) {
       if (ptr->size >= size) {  //Start first fit
         if (ptr->size >= size + META_SIZE) {
-          chunk * split = split_chunk(size, ptr);
-          remove_chunk(ptr);
-          extend_chunk(split);
-          ptr->size = size;
+          //chunk * split = split_chunk(size, ptr);
+          
+            chunk * split;
+            split = (chunk *)((char *)ptr + META_SIZE + size;
+            split->size = ptr->size - size - META_SIZE;
+            split->free = 1;
+            split->next = NULL;
+            split->prev = NULL;
+          
+            remove_chunk(ptr);
+            extend_chunk(split);
+            ptr->size = size;
           //free_size -= (size + sizeof(Metadata));
         }
         else {
