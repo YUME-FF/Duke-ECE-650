@@ -1,22 +1,20 @@
 #include "my_malloc.h"
 
-#define META_SIZE sizeof(struct chunk)
+#define META_SIZE sizeof(chunk)
 
 chunk * first = NULL;
 chunk * free_region = NULL;
 chunk * free_region_before = NULL;
 size_t __SIZE__ = 0;
 
-
-
 /*
 When there is no free block, 
 space should be allocated from the OS using sbrk 
 and add new block to the end of the struct chunk.
 */
-void * allocate_space(size_t size){
+void * allocate_space(size_t size) {
   chunk * new_block = sbrk(size + META_SIZE);
-  __SIZE__ += size + META_SIZE; // record the size of data
+  __SIZE__ += size + META_SIZE;  // record the size of data
   if (first == NULL) {
     first = new_block;
   }
@@ -30,8 +28,8 @@ void * allocate_space(size_t size){
 /*
 Function: extend free memory region in chunk
 */
-void extend_chunk(chunk * ptr){
-  if (free_region == NULL)|| (ptr < free_region)) {
+void extend_chunk(chunk * ptr) {
+  if ((free_region == NULL) || (ptr < free_region)) {
     ptr->prev = NULL;
     ptr->next = free_region;
     if (ptr->next != NULL) {
@@ -48,13 +46,13 @@ void extend_chunk(chunk * ptr){
     while ((curr->next != NULL) && (ptr > curr->next)) {
       curr = curr->next;
     }
-    
+
     //curr -> ptr -> curr->next
     ptr->prev = curr;
     ptr->next = curr->next;
     curr->next = ptr;
 
-    if (ptr->next != NULL) {//ptr is the last 
+    if (ptr->next != NULL) {  //ptr is the last
       ptr->next->prev = ptr;
     }
     else {
@@ -66,7 +64,7 @@ void extend_chunk(chunk * ptr){
 /*
 Function: remove targeted chunk
 */
-void remove_chunk(chunk * ptr){
+void remove_chunk(chunk * ptr) {
 }
 
 /*
@@ -75,7 +73,7 @@ One of First fit's short is it may make a small size to
 be set in a big chunk, thus when the remain chunk is large
 enough, the chunk should be splitted.
 */
-chunk * split_chunk(size_t size, chunk * chk){
+chunk * split_chunk(size_t size, chunk * chk) {
   chunk * splitChunk;
   splitChunk = chk + META_SIZE + size;
   splitChunk->size = chk->size - size - META_SIZE;
@@ -86,24 +84,25 @@ chunk * split_chunk(size_t size, chunk * chk){
 }
 
 //First Fit malloc/free
-void * ff_malloc(size_t size){
+void * ff_malloc(size_t size) {
   if (free_region != NULL) {
     chunk * ptr = free_region;
     while (ptr != NULL) {
       ptr = ptr->next;
     }
   }
-  return allocate_block(size);
+  return allocate_space(size);
 }
 
-void ff_free(void * ptr){
+void ff_free(void * ptr) {
   chunk * pointer;
   pointer = (chunk *)((char *)ptr - META_SIZE);
   pointer->free = 1;
   //free_size += p->size + sizeof(Metadata);
-  extend_block(pointer);
+  extend_chunk(pointer);
 
-  if ((pointer->next != NULL) && ((char *)pointer + pointer->size + META_SIZE == (char *)pointer->next)) {
+  if ((pointer->next != NULL) &&
+      ((char *)pointer + pointer->size + META_SIZE == (char *)pointer->next)) {
     pointer->size += META_SIZE + pointer->next->size;
     //remove_block(p->next);
     pointer->next->next = NULL;
@@ -116,5 +115,4 @@ void ff_free(void * ptr){
     pointer->next = NULL;
     pointer->prev = NULL;
   }
-}
 }
