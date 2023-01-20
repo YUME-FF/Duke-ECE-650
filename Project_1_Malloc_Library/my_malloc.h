@@ -10,8 +10,8 @@ struct chunk_meta {
 };
 typedef struct chunk_meta chunk;
 
-void * allocate_space(chunk * first, size_t size);
-chunk * find_free_chunk(chunk ** ptr, size_t size);
+void * allocate_space(size_t size);
+void * find_free_chunk(size_t size);
 void extend_chunk(chunk * ptr);
 void remove_chunk(chunk * ptr);
 chunk * split_chunk(size_t size, chunk * chk);
@@ -23,3 +23,6 @@ void ff_free(void * ptr);
 //Best Fit malloc/free
 void * bf_malloc(size_t size);
 void bf_free(void * ptr);
+
+unsigned long get_data_segment_size();
+unsigned long get_data_segment_free_space_size();

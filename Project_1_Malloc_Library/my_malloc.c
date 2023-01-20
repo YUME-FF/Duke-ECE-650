@@ -6,6 +6,9 @@
 
 chunk * free_region = NULL;         //end
 chunk * free_region_before = NULL;  //start
+chunk * chk = NULL;
+size_t data_size = 0;
+size_t free_size = 0;
 
 /*
 Function: Request for space with size of 'size'.
@@ -14,7 +17,8 @@ When there is no free block,
 space should be allocated from the OS (request for space) 
 using sbrk and add new block to the end of the struct chunk.
 */
-void * allocate_space(chunk * first, size_t size) {
+void * allocate_space(size_t size) {
+  data_size += size + META_SIZE;
   chunk * new;
   new = sbrk(0);
   void * request = sbrk(size + META_SIZE);
@@ -22,8 +26,8 @@ void * allocate_space(chunk * first, size_t size) {
   if (request == (void *)-1) {
     return NULL;  // sbrk failed.
   }
-  if (first == NULL) {
-    first = new;
+  if (!chk) {
+    chk = new;
   }
   new->size = size;
   new->free = 0;
@@ -37,21 +41,29 @@ Function:checking Find a free chunk and return it is straightforward.
 Iterate through linked list to see if there's a large enough free chunk.
 If large enough, split it
 */
-chunk * find_free_chunk(chunk ** ptr, size_t size) {
-  chunk * curr = free_region;
-  while (curr) {
-    if (curr->size >= size + META_SIZE) {  ////find space that large enough
-      chunk * split = split_chunk(size, curr);
-      extend_chunk(split);
-      curr->size = size;
-      curr->free = 0;
-      curr->next = NULL;
-      curr->prev = NULL;
-      *ptr = curr;
+void * find_free_chunk(size_t size) {
+  chunk * ptr = free_region;
+  while (ptr) {
+    if (ptr->size >= size) {
+      if (ptr->size > size + META_SIZE) {  ////find space that large enough
+        chunk * split = split_chunk(size, ptr);
+        remove_chunk(ptr);
+        extend_chunk(split);
+        ptr->size = size;
+        free_size -= size + META_SIZE;
+      }
+      else {
+        remove_chunk(ptr);
+        free_size -= ptr->size + META_SIZE;
+      }
+      ptr->free = 0;
+      ptr->next = NULL;
+      ptr->prev = NULL;
+      return (char *)ptr + META_SIZE;
     }
-    curr = curr->next;
+    ptr = ptr->next;
   }
-  return curr;
+  return NULL;
 }
 
 /*
@@ -91,6 +103,31 @@ void extend_chunk(chunk * ptr) {
 }
 
 /*
+Function: remove targeted chunk
+*/
+
+void remove_chunk(chunk * ptr) {
+  if (free_region_before == ptr) {
+    if (free_region == ptr) {
+      free_region = NULL;
+      free_region_before = NULL;
+    }
+    else {
+      free_region_before = ptr->prev;
+      free_region_before->next = NULL;
+    }
+  }
+  else if (free_region == ptr) {
+    free_region = ptr->next;
+    free_region->prev = NULL;
+  }
+  else {
+    ptr->prev->next = ptr->next;
+    ptr->next->prev = ptr->prev;
+  }
+}
+
+/*
 Function: split the chunk.
 One of First fit's short is that it may make a small size to
 be set in a big chunk, thus when the remain chunk is large
@@ -113,22 +150,18 @@ void * ff_malloc(size_t size) {
     return NULL;
   }
   if (!free_region) {
-    _chunk = allocate_space(NULL, size);
+    _chunk = allocate_space(size);
     if (!_chunk) {
       return NULL;
     }
   }
   else {
-    chunk * ptr = free_region;
-    _chunk = find_free_chunk(&ptr, size);
+    _chunk = find_free_chunk(size);
     if (!_chunk) {  //there is no space large enough
-      _chunk = allocate_space(free_region, size);
+      _chunk = allocate_space(size);
       if (!_chunk) {
         return NULL;
       }
-    }
-    else {
-      _chunk = ptr + META_SIZE;
     }
   }
   return _chunk;
@@ -142,18 +175,29 @@ void ff_free(void * ptr) {
   pointer = (chunk *)((char *)ptr - META_SIZE);
   assert(pointer->free == 0);
   pointer->free = 1;
+  free_size += pointer->size + META_SIZE;
   extend_chunk(pointer);
 
   if (pointer->next &&
       ((char *)pointer + pointer->size + META_SIZE == (char *)pointer->next)) {
     pointer->size += META_SIZE + pointer->next->size;
-    pointer->next->next = NULL;
-    pointer->next->prev = NULL;
+    //pointer->next->next = NULL;
+    //pointer->next->prev = NULL;
+    remove_chunk(pointer->next);
   }
   if (pointer->prev &&
       ((char *)pointer->prev + pointer->prev->size + META_SIZE == (char *)pointer)) {
     pointer->prev->size += META_SIZE + pointer->size;
-    pointer->next = NULL;
-    pointer->prev = NULL;
+    //pointer->next = NULL;
+    //pointer->prev = NULL;
+    remove_chunk(pointer);
   }
+}
+
+unsigned long get_data_segment_size() {
+  return data_size;
+}
+
+unsigned long get_data_segment_free_space_size() {
+  return free_size;
 }
