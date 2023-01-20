@@ -19,13 +19,15 @@ using sbrk and add new block to the end of the struct chunk.
 */
 void * allocate_space(size_t size) {
   data_size += size + META_SIZE;
+  chunk * new = sbrk(size + META_SIZE);
+  /*
   chunk * new;
   new = sbrk(0);
   void * request = sbrk(size + META_SIZE);
   assert((void *)new == request);
   if (request == (void *)-1) {
     return NULL;  // sbrk failed.
-  }
+    }*/
   if (!chk) {
     chk = new;
   }
@@ -47,6 +49,12 @@ void * find_free_chunk(size_t size) {
     if (ptr->size >= size) {
       if (ptr->size > size + META_SIZE) {  ////find space that large enough
         chunk * split = split_chunk(size, ptr);
+        /*chunk * splitChunk;
+        splitChunk = (chunk *)((char *)ptr + META_SIZE + size);
+        splitChunk->size = ptr->size - size - META_SIZE;
+        splitChunk->free = 1;
+        splitChunk->next = NULL;
+        splitChunk->prev = NULL;*/
         remove_chunk(ptr);
         extend_chunk(split);
         ptr->size = size;
@@ -178,6 +186,7 @@ void ff_free(void * ptr) {
   free_size += pointer->size + META_SIZE;
   extend_chunk(pointer);
 
+  //merge chunk
   if (pointer->next &&
       ((char *)pointer + pointer->size + META_SIZE == (char *)pointer->next)) {
     pointer->size += META_SIZE + pointer->next->size;
