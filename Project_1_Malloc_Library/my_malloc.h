@@ -10,7 +10,8 @@ struct chunk_meta {
 };
 typedef struct chunk_meta chunk;
 
-void * allocate_space(size_t size);
+void * allocate_space(chunk * first, size_t size);
+chunk * find_free_chunk(chunk ** ptr, size_t size);
 void extend_chunk(chunk * ptr);
 void remove_chunk(chunk * ptr);
 chunk * split_chunk(size_t size, chunk * chk);
