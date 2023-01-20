@@ -42,7 +42,7 @@ chunk * find_free_chunk(chunk ** ptr, size_t size) {
   while (curr) {
     if (curr->size >= size + META_SIZE) {  ////find space that large enough
       chunk * split = split_chunk(size, curr);
-      remove_chunk(curr);
+      //remove_chunk(curr);
       extend_chunk(split);
       curr->size = size;
       curr->free = 0;
@@ -62,7 +62,7 @@ void extend_chunk(chunk * ptr) {
   if (!free_region || (ptr < free_region)) {
     ptr->prev = NULL;
     ptr->next = free_region;
-    if (ptr->next != NULL) {
+    if (ptr->next) {
       ptr->next->prev = ptr;
     }
     else {
@@ -73,7 +73,7 @@ void extend_chunk(chunk * ptr) {
   else {
     chunk * curr = free_region;
     //find until ptr < curr->next
-    while ((curr->next != NULL) && (ptr > curr->next)) {
+    while (curr->next && (ptr > curr->next)) {
       curr = curr->next;
     }
 
@@ -82,7 +82,7 @@ void extend_chunk(chunk * ptr) {
     ptr->next = curr->next;
     curr->next = ptr;
 
-    if (ptr->next != NULL) {  //ptr is the last
+    if (ptr->next) {  //ptr is the last
       ptr->next->prev = ptr;
     }
     else {
@@ -160,19 +160,27 @@ void * ff_malloc(size_t size) {
 }
 
 void ff_free(void * ptr) {
+  if (!ptr) {  //call free with a NULL ptr
+    return;
+  }
   chunk * pointer;
   pointer = (chunk *)((char *)ptr - META_SIZE);
+  assert(pointer->free == 0);
   pointer->free = 1;
   extend_chunk(pointer);
 
-  if ((pointer->next != NULL) &&
+  if (pointer->next &&
       ((char *)pointer + pointer->size + META_SIZE == (char *)pointer->next)) {
     pointer->size += META_SIZE + pointer->next->size;
-    remove_chunk(pointer->next);
+    pointer->next->next = NULL;
+    pointer->next->prev = NULL;
+    //remove_chunk(pointer->next);
   }
-  if ((pointer->prev != NULL) &&
+  if (pointer->prev &&
       ((char *)pointer->prev + pointer->prev->size + META_SIZE == (char *)pointer)) {
     pointer->prev->size += META_SIZE + pointer->size;
-    remove_chunk(pointer);
+    //remove_chunk(pointer);
+    pointer->next = NULL;
+    pointer->prev = NULL;
   }
 }
