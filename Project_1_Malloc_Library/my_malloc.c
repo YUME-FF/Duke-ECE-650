@@ -42,7 +42,6 @@ chunk * find_free_chunk(chunk ** ptr, size_t size) {
   while (curr) {
     if (curr->size >= size + META_SIZE) {  ////find space that large enough
       chunk * split = split_chunk(size, curr);
-      //remove_chunk(curr);
       extend_chunk(split);
       curr->size = size;
       curr->free = 0;
@@ -88,30 +87,6 @@ void extend_chunk(chunk * ptr) {
     else {
       free_region_before = ptr;
     }
-  }
-}
-
-/*
-Function: remove targeted chunk
-*/
-void remove_chunk(chunk * ptr) {
-  if (free_region_before == ptr) {
-    if (free_region == ptr) {
-      free_region = NULL;
-      free_region_before = NULL;
-    }
-    else {
-      free_region_before = ptr->prev;
-      free_region_before->next = NULL;
-    }
-  }
-  else if (free_region == ptr) {
-    free_region = ptr->next;
-    free_region->prev = NULL;
-  }
-  else {
-    ptr->prev->next = ptr->next;
-    ptr->next->prev = ptr->prev;
   }
 }
 
@@ -174,12 +149,10 @@ void ff_free(void * ptr) {
     pointer->size += META_SIZE + pointer->next->size;
     pointer->next->next = NULL;
     pointer->next->prev = NULL;
-    //remove_chunk(pointer->next);
   }
   if (pointer->prev &&
       ((char *)pointer->prev + pointer->prev->size + META_SIZE == (char *)pointer)) {
     pointer->prev->size += META_SIZE + pointer->size;
-    //remove_chunk(pointer);
     pointer->next = NULL;
     pointer->prev = NULL;
   }
