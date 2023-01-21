@@ -6,7 +6,6 @@
 
 chunk * free_region_Start = NULL;  //Start
 chunk * free_region_End = NULL;    //End
-chunk * chk = NULL;
 size_t data_size = 0;
 size_t free_size = 0;
 
