@@ -10,11 +10,16 @@ struct chunk_meta {
 };
 typedef struct chunk_meta chunk;
 
+void printChunk(chunk * chk);
+void printFreeStatus();
+
 void * allocate_space(size_t size);
 void * find_free_chunk(size_t size);
 void extend_chunk(chunk * ptr);
 void remove_chunk(chunk * ptr);
 chunk * split_chunk(size_t size, chunk * chk);
+void mergeRight(chunk * chk);
+void mergeLeft(chunk * chk);
 
 //First Fit malloc/free
 void * ff_malloc(size_t size);
