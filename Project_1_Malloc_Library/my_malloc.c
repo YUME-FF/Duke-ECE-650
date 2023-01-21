@@ -138,7 +138,7 @@ If large enough, split it
 void * find_free_chunk(size_t size) {
   chunk * ptr = free_region_Start;
   while (ptr) {
-    if (ptr->free && ptr->size >= size) {
+    if (ptr->size >= size) {
       if (ptr->size >= size + META_SIZE) {  ////find space that large enough
         chunk * split = split_chunk(size, ptr);
 
@@ -209,7 +209,6 @@ void ff_free(void * ptr) {
   }
   chunk * pointer;
   pointer = (chunk *)((char *)ptr - META_SIZE);
-  assert(pointer->free == 0);
   pointer->free = 1;
   free_size += pointer->size + META_SIZE;
   extend_chunk(pointer);
