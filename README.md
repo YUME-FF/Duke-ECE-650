@@ -30,9 +30,9 @@ requested allocation size.
 
 Details of requirement can be found in [Project1.pdf](Project_1_Malloc_Library/Project1.pdf)
 
-### 1.1 Implementation Description
+### Implementation Description
 
-#### 1.1.1 Malloc
+#### Malloc
 
   For each space chunk, I define a struct using **Double LinkedList** to know the **size** of the chunk, whether or not it's **free**, and what the **next** and **previous** chunk.
   
@@ -59,11 +59,11 @@ chunk * free_region_End = NULL;
  
 If we don't find a free block, we'll have to request space using sbrk to allocate space.
 
-#### 1.1.2 Free
+#### Free
 
 For free(), first I upadate the size of the chunk and make the **free** = 1, then check the previous and next chunk if free or not, if free, then merge them.
 
-### 1.2 Performance Result Presentation and Analysis
+### Performance Result Presentation and Analysis
 
 <img src="https://user-images.githubusercontent.com/73271231/214691154-acdcb645-d944-4cda-a1bd-86cf6ab95125.png" width="800"/>
 
