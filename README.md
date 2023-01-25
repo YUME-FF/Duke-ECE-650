@@ -4,12 +4,12 @@ This is Zhe Fan's ECE650 Project Repository.
 
 # Table of Contents
 
-1. [Malloc Library](#Malloc-Library)
-2. [Implementation Description](#Implementation-Description)
-3. [Malloc](#Malloc)
-4. [Free](#Free)
-5. [Performance Result Presentation and Analysis](#Performance-Result-Presentation-and-Analysis)
-6. [My second project](#my-second-project)
+- [Malloc Library](#Malloc-Library)
+  - [Implementation Description](#Implementation-Description)
+    - [Malloc](#Malloc)
+    - [Free](#Free)
+  - [Performance Result Presentation and Analysis](#Performance-Result-Presentation-and-Analysis)
+- [My second project](#my-second-project)
 ## Malloc Library
 
 For this assignment, I will implement my own version of several memory allocation functions from the C standard library. This implementation is to be done in C code. The C standard library includes 4 malloc reallrelated library functions: malloc(), free(), calloc(), and oc(). In this assignment, I implement versions of malloc() and free(): 
@@ -65,6 +65,12 @@ For free(), first I upadate the size of the chunk and make the **free** = 1, the
 
 ### 1.2 Performance Result Presentation and Analysis
 
+<img src="https://user-images.githubusercontent.com/73271231/214691154-acdcb645-d944-4cda-a1bd-86cf6ab95125.png" width="800"/>
 
+From the Table above, we can see that for small range size, the execution time of Best Fit is less than that of First Fit. This is due to that in the figure above, if we first want to use 2 free chunks, finally the 3rd request will return that there is not enough space, which leading to call the sbrk() to request space from OS. However, calling sbrk() is more time-consuming than directly using free chunks in small range of size. While Best Fit will find the free chunk with minimum suitable space so that it will use all free chunks efficiently.
+
+For equal range size, the two methods show that they have close execution time and fragmentation. This is because for equal range size, two methods run in the same way. Best Fit behaves in the same way as First Fit does namely.
+
+For large range size, though Best Fit is faster than First Fit in small range size, iterating to find the free chunk with minimum suitable space in a large range will cost more time than sbrk(). Thus First Fit is faster than Best Fit in large range size.
 
 ## My second project
