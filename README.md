@@ -5,7 +5,11 @@ This is Zhe Fan's ECE650 Project Repository.
 # Table of Contents
 
 1. [Malloc Library](#Malloc-Library)
-2. [My second project](#my-second-project)
+  1.1 [Implementation Description](#Implementation-Description)
+    1.1.1 [Malloc](#Malloc)
+    1.1.2 [Free](#Free)
+   1.2 [Performance Result Presentation and Analysis](#Performance-Result-Presentation-and-Analysis)
+3. [My second project](#my-second-project)
 ## Malloc Library
 
 For this assignment, I will implement my own version of several memory allocation functions from the C standard library. This implementation is to be done in C code. The C standard library includes 4 malloc reallrelated library functions: malloc(), free(), calloc(), and oc(). In this assignment, I implement versions of malloc() and free(): 
@@ -26,7 +30,10 @@ requested allocation size.
 
 Details of requirement can be found in [Project1.pdf](Project_1_Malloc_Library/Project1.pdf)
 
-### 1.Implementation Description
+### 1.1 Implementation Description
+
+#### 1.1.1 Malloc
+
   For each space chunk, I define a struct using **Double LinkedList** to know the **size** of the chunk, whether or not it's **free**, and what the **next** and **previous** chunk.
   
 ```
@@ -46,15 +53,17 @@ chunk * free_region_Start = NULL;
 chunk * free_region_End = NULL;
 ```
   
-  For malloc, space should only be allocated when existing space is not enough. Thus given that we have this linked list structure, checking if we have a free chunk and return it. When we get a request of some size, we iterate through our linked list to see if there's a free chunk that's large enough. See Algorithm 1:
-    
-![image](https://user-images.githubusercontent.com/73271231/214686541-1e978e90-cc74-404a-bc6e-4153d9fb8da0.png)
+  For malloc, space should only be allocated when existing space is not enough. Thus given that we have this linked list structure, checking if we have a free chunk and return it. When we get a request of some size, we iterate through our linked list to see if there's a free chunk that's large enough.
 
- In details, when the chunk is large enough, I also need to reuse free space efficiently if possible. To implementaion that, given that I have LinkedList, we can using splitting and merging in Algorithm 2:
+ In details, when the chunk is large enough, I also need to reuse free space efficiently if possible. To implementaion that, given that I have LinkedList, we can using splitting and merging.
  
- ![image](https://user-images.githubusercontent.com/73271231/214686799-2c1c55d6-649f-40c0-ae94-fd8b66578729.png)
-
 If we don't find a free block, we'll have to request space using sbrk to allocate space.
+
+#### 1.1.2 Free
+
+For free(), first I upadate the size of the chunk and make the **free** = 1, then check the previous and next chunk if free or not, if free, then merge them.
+
+### 1.2 Performance Result Presentation and Analysis
 
 
 
