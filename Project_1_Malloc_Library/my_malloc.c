@@ -131,37 +131,69 @@ chunk * split_chunk(size_t size, chunk * chk) {
 }
 
 /*
-Function:checking Find a free chunk and return it is straightforward. 
+Function: split the chunk and return used chunk
+*/
+void * reuse_chunk(chunk * ptr, size_t size) {
+  if (ptr->size >= size + META_SIZE) {  //find space that large enough
+    chunk * split = split_chunk(size, ptr);
+
+    ptr->size = size;
+
+    extend_chunk(split);
+    remove_chunk(ptr);
+    free_size -= size + META_SIZE;
+  }
+  else {
+    remove_chunk(ptr);
+    free_size -= ptr->size + META_SIZE;
+  }
+  ptr->free = 0;
+  ptr->next = NULL;
+  ptr->prev = NULL;
+  return (char *)ptr + META_SIZE;
+}
+
+/*
+Function:checking Find a free chunk and return it straightforward. 
 Iterate through linked list to see if there's a large enough free chunk.
 If large enough, split it
 */
-void * find_free_chunk(size_t size) {
+void * ff_find_free_chunk(size_t size) {
   chunk * ptr = free_region_Start;
   while (ptr) {
     if (ptr->size >= size) {
-      if (ptr->size >= size + META_SIZE) {  ////find space that large enough
-        chunk * split = split_chunk(size, ptr);
-
-        ptr->size = size;
-
-        extend_chunk(split);
-        remove_chunk(ptr);
-        free_size -= size + META_SIZE;
-      }
-      else {
-        remove_chunk(ptr);
-        free_size -= ptr->size + META_SIZE;
-      }
-      ptr->free = 0;
-      ptr->next = NULL;
-      ptr->prev = NULL;
-      return (char *)ptr + META_SIZE;
+      return reuse_chunk(ptr, size);
     }
     ptr = ptr->next;
   }
   return NULL;
 }
 
+/*
+Function:checking Find a free chunk and return it straightforward.
+Iterate through linked list to see if there's a best fit free chunk.
+*/
+void * bf_find_free_chunk(size_t size) {
+  chunk * ptr = free_region_Start;
+  chunk * bf_ptr = NULL;  //record minimal best fit chunk
+  while (ptr) {
+    if (ptr->size >= size) {
+      if (!bf_ptr || ptr->size < bf_ptr->size) {
+        bf_ptr = ptr;
+      }
+      if (ptr->size == size) {
+        return reuse_chunk(bf_ptr, size);
+      }
+    }
+    ptr = ptr->next;
+  }
+  if (!bf_ptr) {
+    return NULL;
+  }
+  else {
+    return reuse_chunk(bf_ptr, size);
+  }
+}
 /*
 Function: Merge chunk
 */
@@ -192,7 +224,7 @@ void * ff_malloc(size_t size) {
     }
   }
   else {
-    _chunk = find_free_chunk(size);
+    _chunk = ff_find_free_chunk(size);
     if (!_chunk) {  //there is no space large enough
       _chunk = allocate_space(size);
       if (!_chunk) {
@@ -216,6 +248,33 @@ void ff_free(void * ptr) {
   //merge chunk
   mergeRight(pointer);
   mergeLeft(pointer);
+}
+
+void * bf_malloc(size_t size) {
+  chunk * _chunk;
+  if (size <= 0) {
+    return NULL;
+  }
+  if (!free_region_Start) {
+    _chunk = allocate_space(size);
+    if (!_chunk) {
+      return NULL;
+    }
+  }
+  else {
+    _chunk = bf_find_free_chunk(size);
+    if (!_chunk) {  //there is no space
+      _chunk = allocate_space(size);
+      if (!_chunk) {
+        return NULL;
+      }
+    }
+  }
+  return _chunk;
+}
+
+void bf_free(void * ptr) {
+  return ff_free(ptr);
 }
 
 unsigned long get_data_segment_size() {

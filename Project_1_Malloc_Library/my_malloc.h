@@ -14,7 +14,9 @@ void printChunk(chunk * chk);
 void printFreeStatus();
 
 void * allocate_space(size_t size);
-void * find_free_chunk(size_t size);
+void * reuse_chunk(chunk * ptr, size_t size);
+void * ff_find_free_chunk(size_t size);
+void * bf_find_free_chunk(size_t size);
 void extend_chunk(chunk * ptr);
 void remove_chunk(chunk * ptr);
 chunk * split_chunk(size_t size, chunk * chk);
