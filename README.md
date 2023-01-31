@@ -9,7 +9,7 @@ This is Zhe Fan's ECE650 Project Repository.
     - [Malloc](#Malloc)
     - [Free](#Free)
   - [Performance Result Presentation and Analysis](#Performance-Result-Presentation-and-Analysis)
-- [My second project](#my-second-project)
+- [Thread-Safe Malloc](#Thread-Safe-Malloc)
 ## Malloc Library
 
 For this assignment, I will implement my own version of several memory allocation functions from the C standard library. This implementation is to be done in C code. The C standard library includes 4 malloc reallrelated library functions: malloc(), free(), calloc(), and oc(). In this assignment, I implement versions of malloc() and free(): 
@@ -73,4 +73,4 @@ For equal range size, the two methods show that they have close execution time a
 
 For large range size, though Best Fit is faster than First Fit in small range size, iterating to find the free chunk with minimum suitable space in a large range will cost more time than sbrk(). Thus First Fit is faster than Best Fit in large range size.
 
-## My second project
+## Thread-Safe Malloc
