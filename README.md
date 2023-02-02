@@ -97,6 +97,6 @@ For Non-Lock-Based version, we only put lock before and after sbrk(). And each t
 | *Data segment size(bytes)| 43251424 | 44433824 |
 
 
-For Execution Time, Non-Lock is faster than Lock. According to Section 1, Non-Lock only lock sbrk(), but all other operations will happen simultaneously. However, for Lock-version, it lock the malloc() and free() which makes less code run simultaneously. Therefore, Lock-Based is faster.
+For Execution Time, Non-Lock is faster than Lock. According to Section 1, Non-Lock only lock sbrk(), but all other operations will happen simultaneously. However, for Lock-version, it locks the malloc() and free() which makes less code run simultaneously. Therefore, Lock-Based is faster.
 	
 For Data segment size, Lock-Based and Non-Lock-Based have close size, which means they behavior similarly in find free chunk.
