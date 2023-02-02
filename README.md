@@ -10,10 +10,10 @@ This is Zhe Fan's ECE650 Project Repository.
     - [Free](#Free)
   - [Performance Result Presentation and Analysis](#Performance-Result-Presentation-and-Analysis)
 - [Thread-Safe Malloc](#Thread-Safe-Malloc)
-  - [Implementation Description](#Implementation-Description)
+  - [Implementation Description](#Implementation-Description-1)
     - [Lock-Based](#Lock-Based)
     - [Non-Lock-Based](#Non-Lock-Based)
-  - [Performance Result Presentation and Analysis](#Performance-Result-Presentation-and-Analysis)
+  - [Performance Result Presentation and Analysis](#Performance-Result-Presentation-and-Analysis-1)
 ## Malloc Library
 
 For this assignment, I will implement my own version of several memory allocation functions from the C standard library. This implementation is to be done in C code. The C standard library includes 4 malloc reallrelated library functions: malloc(), free(), calloc(), and oc(). In this assignment, I implement versions of malloc() and free(): 
