@@ -107,6 +107,19 @@ For Data segment size, Lock-Based and Non-Lock-Based have close size, which mean
 
 ### Socket Overview
 
+**What should Server do:** 
+- Create a ServerSocket object and bind the listening port
+- Call the accept() method to monitor the client's request
+- After the connection is established, read the request information sent by the client through the input stream
+- Send response information to the client through the output stream
+- Close related resources
+
+**What should Client do:**
+- Create a Socket object, indicating the address and port number of the server to be linked
+- After the link is established, send request information to the server through the output stream
+- Get the server response information through the output stream
+- Close related resources
+
 ```mermaid
 sequenceDiagram
     participant S as Server
