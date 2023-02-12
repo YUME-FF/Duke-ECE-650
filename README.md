@@ -115,7 +115,7 @@ sequenceDiagram
     Note over S: Create ServerSocket
     S-->>C: Wait for request
     C->>S: Creat socket to request to connet
-    S-->>C: Accept connection on socket
+    S-->>C: Accept connection on socket //accept()
     rect rgb(200, 150, 255)
     loop Messages
         Note over S,C: InputStream
