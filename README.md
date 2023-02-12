@@ -14,6 +14,8 @@ This is Zhe Fan's ECE650 Project Repository.
     - [Lock-Based](#Lock-Based)
     - [Non-Lock-Based](#Non-Lock-Based)
   - [Performance Result Presentation and Analysis](#Performance-Result-Presentation-and-Analysis-1)
+- [TCP Socket Programming](#TCP-Socket-Programming)
+  - [Socket Overview](#Socket-Overview-2)
 ## Malloc Library
 
 For this assignment, I will implement my own version of several memory allocation functions from the C standard library. This implementation is to be done in C code. The C standard library includes 4 malloc reallrelated library functions: malloc(), free(), calloc(), and oc(). In this assignment, I implement versions of malloc() and free(): 
@@ -100,3 +102,26 @@ For Non-Lock-Based version, we only put lock before and after sbrk(). And each t
 For Execution Time, Non-Lock is faster than Lock. According to Section 1, Non-Lock only lock sbrk(), but all other operations will happen simultaneously. However, for Lock-version, it locks the malloc() and free() which makes less code run simultaneously. Therefore, Lock-Based is faster.
 	
 For Data segment size, Lock-Based and Non-Lock-Based have close size, which means they behavior similarly in find free chunk.
+
+## TCP Socket Programming
+
+### Socket Overview
+
+```mermaid
+sequenceDiagram
+    participant S as Server
+    participant C as Client
+    autonumber
+    Note over S: Create ServerSocket
+    S-->>C: Wait for request
+    C->>S: Creat socket to request to connet
+    S-->>C: Accept connection on socket
+    rect rgb(200, 150, 255)
+    loop Messages
+        Note over S,C: InputStream
+        Note over S,C: outputStream
+        S-->C: Communication
+    end
+    end
+    S-->C: Close socket
+```
