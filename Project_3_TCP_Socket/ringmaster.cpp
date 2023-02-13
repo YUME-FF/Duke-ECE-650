@@ -94,6 +94,8 @@ int main(int argc, char * argv[]) {
     }
   }
 
+  //At the end of the game (when the ringmaster
+  //receive the potato from the player who is “it”)
   for (int i = 0; i < num_players; i++) {
     int sd = send(fd[i], &potato, sizeof(potato), 0);
     while (sd - sizeof(potato)) {
@@ -103,6 +105,7 @@ int main(int argc, char * argv[]) {
     }
   }
 
+  //print a trace of the potato to the screen
   cout << "Trace of potato:" << endl;
   for (int i = 0; i < potato.cnt; i++) {
     cout << potato.path[i];
