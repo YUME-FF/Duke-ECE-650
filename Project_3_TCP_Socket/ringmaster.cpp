@@ -47,14 +47,14 @@ int main(int argc, char * argv[]) {
   for (int i = 0; i < num_players; i++) {
     int nextID = (i == num_players - 1) ? 0 : i + 1;
     int nextPort = port[nextID];
-    char address[100];
-    memset(address, 0, sizeof(address));
-    strcpy(address, ip[nextID].c_str());
+    char nextIP[100];
+    memset(nextIP, 0, sizeof(nextIP));
+    strcpy(nextIP, ip[nextID].c_str());
 
-    // send next player id to client
-    send(fd[i], &nextPort, sizeof(nextPort), 0);
     // send next player port to client
-    send(fd[i], &address, sizeof(address), 0);
+    send(fd[i], &nextPort, sizeof(nextPort), 0);
+    // send next player ip to client
+    send(fd[i], &nextIP, sizeof(nextIP), 0);
   }
 
   //Create a “potato” object
@@ -94,8 +94,7 @@ int main(int argc, char * argv[]) {
     }
   }
 
-  //At the end of the game (when the ringmaster
-  //receive the potato from the player who is “it”)
+  //Shut the game down by sending a message to each player
   for (int i = 0; i < num_players; i++) {
     int sd = send(fd[i], &potato, sizeof(potato), 0);
     while (sd - sizeof(potato)) {
