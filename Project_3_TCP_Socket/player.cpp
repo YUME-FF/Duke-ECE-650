@@ -32,6 +32,7 @@ int main(int argc, char * argv[]) {
   playerMaster.createSocket();
 
   int port = playerMaster.getPort();
+  // send port to master
   send(player.socket_fd, &port, sizeof(port), 0);
 
   close(player.socket_fd);
