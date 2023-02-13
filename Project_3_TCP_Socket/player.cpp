@@ -7,7 +7,7 @@
 using namespace std;
 
 int main(int argc, char * argv[]) {
-  if (argc != 2) {
+  if (argc != 3) {
     cout << "The client should be invoked as: " << endl;
     cout << "player <machine_name> <port_num>" << endl;
     cout << "example: ./player vcm-xxxx.vm.duke.edu 1234" << endl;
