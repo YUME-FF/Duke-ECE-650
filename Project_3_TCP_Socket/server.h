@@ -19,6 +19,6 @@ class Server {
 
   void initStatus(const char * _hostname, const char * _port);
   void createSocket();
-  int acceptConnection(string & ip);
+  void acceptConnection(string & ip);
   int getPort();
 };

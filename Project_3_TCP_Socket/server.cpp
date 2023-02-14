@@ -17,7 +17,7 @@ void Server::initStatus(const char * _hostname, const char * _port) {
 }
 
 void Server::createSocket() {
-  if (port == NULL) {
+  if (port == "") {
     //OS will assign a port
     struct sockaddr_in * addr_in = (struct sockaddr_in *)(host_info_list->ai_addr);
     addr_in->sin_port = 0;
@@ -49,20 +49,18 @@ void Server::createSocket() {
   freeaddrinfo(host_info_list);
 }
 
-int Server::acceptConnection(string & ip) {
+void Server::acceptConnection(string & ip) {
   struct sockaddr_storage socket_addr;
   socklen_t socket_addr_len = sizeof(socket_addr);
   client_connection_fd =
       accept(socket_fd, (struct sockaddr *)&socket_addr, &socket_addr_len);
   if (client_connection_fd == -1) {
     cerr << "Error: cannot accept connection on socket" << endl;
-    return -1;
+    exit(EXIT_FAILURE);
   }  //if
 
   struct sockaddr_in * addr = (struct sockaddr_in *)&socket_addr;
   ip = inet_ntoa(addr->sin_addr);
-
-  return client_connection_fd;
 }
 
 int Server::getPort() {
