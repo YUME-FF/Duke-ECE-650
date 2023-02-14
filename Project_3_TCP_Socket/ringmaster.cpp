@@ -13,12 +13,12 @@ int main(int argc, char * argv[]) {
     return 1;
   }
 
-  vector<int> fd;
-  vector<string> ip;
-  vector<int> port;
-
   int num_players = atoi(argv[2]);
   int num_hops = atoi(argv[3]);
+
+  vector<int> fd;
+  vector<string> ip(num_players);
+  vector<int> port(num_players);
 
   cout << "Potato Ringmaster" << endl;
   cout << "Players = " << num_players << endl;
@@ -31,14 +31,16 @@ int main(int argc, char * argv[]) {
   //Establish N network socket connections with N number of players
   for (int i = 0; i < num_players; i++) {
     //get ip
-    fd.push_back(ringmaster.acceptConnection(ip[i]));
+    ringmaster.acceptConnection(ip[i]);
+    fd.push_back(ringmaster.client_connection_fd);
 
     // send player_id to client
     send(fd[i], &i, sizeof(i), 0);
+
     // send num_players to client
     send(fd[i], &num_players, sizeof(num_players), 0);
     // receive port from client
-    recv(fd[i], &port[i], sizeof(port[i]), 0);
+    recv(fd[i], &port[i], sizeof(port[i]), MSG_WAITALL);
 
     cout << "Player " << i << " is ready to play " << endl;
   }
@@ -51,10 +53,10 @@ int main(int argc, char * argv[]) {
     memset(nextIP, 0, sizeof(nextIP));
     strcpy(nextIP, ip[nextID].c_str());
 
-    // send next player port to client
-    send(fd[i], &nextPort, sizeof(nextPort), 0);
     // send next player ip to client
     send(fd[i], &nextIP, sizeof(nextIP), 0);
+    // send next player port to client
+    send(fd[i], &nextPort, sizeof(nextPort), 0);
   }
 
   //Create a “potato” object
@@ -63,7 +65,7 @@ int main(int argc, char * argv[]) {
 
   //Randomly select a player and send the
   //“potato” to the selected player
-  if (num_hops) {
+  if (num_hops > 0) {
     srand((unsigned int)time(NULL) + num_players);
     int random = rand() % num_players;
 
@@ -71,9 +73,8 @@ int main(int argc, char * argv[]) {
 
     //On success, these calls return the number of bytes sent.
     int sd = send(fd[random], &potato, sizeof(potato), 0);
-    while (sd - sizeof(potato)) {
-      cerr << "Error: message buffer being sent is broken" << endl;
-      cout << "retrying..." << endl;
+    if (sd == -1) {
+      cerr << "Error(1001): message buffer being sent is broken" << endl;
       sd = send(fd[random], &potato, sizeof(potato), 0);
     }
 
@@ -82,12 +83,13 @@ int main(int argc, char * argv[]) {
     for (int i = 0; i < num_players; i++) {
       FD_SET(fd[i], &readfds);
     }
+
     select(ringmaster.client_connection_fd + 1, &readfds, NULL, NULL, NULL);
     for (int i = 0; i < num_players; i++) {
       if (FD_ISSET(fd[i], &readfds)) {
         int rec = recv(fd[i], &potato, sizeof(potato), MSG_WAITALL);
-        if (rec - sizeof(potato)) {
-          cerr << "Error: potate being recieve is broken" << endl;
+        if (rec == -1) {
+          cerr << "Error(1002): potate being recieved is broken" << endl;
         }
         break;
       }
@@ -97,10 +99,8 @@ int main(int argc, char * argv[]) {
   //Shut the game down by sending a message to each player
   for (int i = 0; i < num_players; i++) {
     int sd = send(fd[i], &potato, sizeof(potato), 0);
-    while (sd - sizeof(potato)) {
-      cerr << "Error: message buffer being sent is broken" << endl;
-      cout << "retrying..." << endl;
-      sd = send(fd[i], &potato, sizeof(potato), 0);
+    if (sd == -1) {
+      cerr << "Error(1003): message buffer being sent is broken" << endl;
     }
   }
 
