@@ -62,7 +62,7 @@ int main(int argc, char * argv[]) {
   srand((unsigned int)time(NULL) + player_id);
   int nfds = 1 + max(Player2right.socket_fd, player2left.client_connection_fd);
 
-   while (1) {
+  while (1) {
     FD_ZERO(&readfds);
     for (int i = 0; i < 3; i++) {
       FD_SET(fd[i], &readfds);
