@@ -51,6 +51,7 @@ void Server::createSocket() {
 
 void Server::acceptConnection(string & ip) {
   struct sockaddr_storage socket_addr;
+  char str[INET_ADDRSTRLEN];
   socklen_t socket_addr_len = sizeof(socket_addr);
   client_connection_fd =
       accept(socket_fd, (struct sockaddr *)&socket_addr, &socket_addr_len);
@@ -59,8 +60,10 @@ void Server::acceptConnection(string & ip) {
     exit(EXIT_FAILURE);
   }  //if
 
+  //only use IPv4
   struct sockaddr_in * addr = (struct sockaddr_in *)&socket_addr;
-  ip = inet_ntoa(addr->sin_addr);
+  inet_ntop(socket_addr.ss_family, &(((struct sockaddr_in*)addr)->sin_addr), str, INET_ADDRSTRLEN);
+  ip = str;
 }
 
 int Server::getPort() {
