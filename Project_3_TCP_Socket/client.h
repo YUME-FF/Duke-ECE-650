@@ -1,3 +1,5 @@
+#ifndef __CLIENT_H__
+#define __CLIENT_H__
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <sys/socket.h>
@@ -19,3 +21,4 @@ class Client {
   void initStatus(const char * _hostname, const char * _port);
   void createSocket();
 };
+#endif
