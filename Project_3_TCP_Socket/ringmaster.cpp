@@ -144,12 +144,14 @@ int main(int argc, char * argv[]) {
   //Shut the game down by sending a message to each player
   shutDownGame(num_players, fd, potato);
 
-  //print a trace of the potato to the screen
-  cout << "Trace of potato:" << endl;
-  for (int i = 0; i < potato.cnt; i++) {
-    cout << potato.path[i];
-    char out = (i == potato.cnt - 1) ? '\n' : ',';
-    cout << out;
+  if (num_hops > 0) {
+    //print a trace of the potato to the screen
+    cout << "Trace of potato:" << endl;
+    for (int i = 0; i < potato.cnt; i++) {
+      cout << potato.path[i];
+      char out = (i == potato.cnt - 1) ? '\n' : ',';
+      cout << out;
+    }
   }
 
   for (int i = 0; i < num_players; i++) {
