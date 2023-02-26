@@ -7,7 +7,6 @@
 
 #include <cstring>
 #include <iostream>
-using namespace std;
 
 class Server {
  public:
@@ -21,7 +20,7 @@ class Server {
 
   void initStatus(const char * _hostname, const char * _port);
   void createSocket();
-  void acceptConnection(string & ip);
+  void acceptConnection(std::string & ip);
   int getPort();
 };
 #endif

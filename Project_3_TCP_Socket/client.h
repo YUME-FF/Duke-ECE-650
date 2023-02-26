@@ -7,7 +7,6 @@
 
 #include <cstring>
 #include <iostream>
-using namespace std;
 
 class Client {
  public:
