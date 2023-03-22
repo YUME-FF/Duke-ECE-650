@@ -167,19 +167,19 @@ void query3(connection * C, string team_name) {
 void query4(connection * C, string team_state, string team_color) {
   work work(*C);
   stringstream query;
-  query << "SELECT FIRST_NAME, LAST_NAME, UNIFORM_NUM FROM PLAYER, STATE, COLOR, TEAM "
+  query << "SELECT  UNIFORM_NUM, FIRST_NAME, LAST_NAME FROM PLAYER, STATE, COLOR, TEAM "
            "WHERE PLAYER.TEAM_ID = TEAM.TEAM_ID AND TEAM.COLOR_ID = COLOR.COLOR_ID AND "
            "TEAM.STATE_ID = STATE.STATE_ID AND STATE.NAME = "
         << work.quote(team_state) << " AND "
         << "COLOR.NAME = " << work.quote(team_color) << ";";
 
-  cout << "FIRST_NAME LAST_NAME UNIFORM_NUM" << endl;
+  cout << "UNIFORM_NUM FIRST_NAME LAST_NAME" << endl;
   work.commit();
   nontransaction nontransaction(*C);
   result result(nontransaction.exec(query.str()));
   result::iterator it = result.begin();
   while (it != result.end()) {
-    cout << it[0].as<string>() << " " << it[1].as<string>() << " " << it[2].as<int>()
+    cout << it[0].as<int>() << " " << it[1].as<string>() << " " << it[2].as<string>()
          << endl;
     ++it;
   }
